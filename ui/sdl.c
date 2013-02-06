@@ -59,6 +59,11 @@ static SDL_PixelFormat host_format;
 static int scaling_active = 0;
 static Notifier mouse_mode_notifier;
 
+#ifdef EMSCRIPTEN
+	#define SDL_CreateCursor(a,b,c,d,e,f)	NULL
+	#define SDL_GetCursor()	NULL
+#endif
+
 static void sdl_update(DisplayState *ds, int x, int y, int w, int h)
 {
     //    printf("updating x=%d y=%d w=%d h=%d\n", x, y, w, h);
