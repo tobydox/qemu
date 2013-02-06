@@ -22,3 +22,6 @@
 [submodule "pixman"]
 	path = pixman
 	url = git://anongit.freedesktop.org/pixman
+[submodule "emscripten"]
+	path = emscripten
+	url = git://github.com/tobydox/emscripten.git
