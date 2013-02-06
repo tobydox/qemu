@@ -1,0 +1,8 @@
+Run all scripts in this directory in order to build qemu.js in
+
+  build/i386-softmmu
+
+You can afterwards run it via
+
+  nodejs qemu.js -nographic
+
