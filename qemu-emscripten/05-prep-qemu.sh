@@ -1,8 +1,11 @@
 #!/bin/sh
 
-cp -v glib.c build/
-cp -v pixman*.c build/
+. ./00-build-vars.sh
 
-mkdir -p build/pixman/pixman
-cp -v pixman*.h build/pixman/pixman
+cp -v glib.c $BASEDIR
+cp -v pixman*.c $BASEDIR
+cp -v sdl*.c $BASEDIR
+
+mkdir -p $BUILD/pixman/pixman
+cp -v pixman*.h $BUILD/pixman/pixman
 
