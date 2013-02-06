@@ -29,6 +29,10 @@
 #include "hw/hw.h"
 
 #include "qemu/timer.h"
+#ifdef EMSCRIPTEN
+#undef CONFIG_POSIX
+#endif
+
 #ifdef CONFIG_POSIX
 #include <pthread.h>
 #endif
@@ -557,6 +561,10 @@ static void dynticks_rearm_timer(struct qemu_alarm_timer *t,
 #endif /* defined(__linux__) */
 
 #if !defined(_WIN32)
+
+#ifdef EMSCRIPTEN
+#define setitimer(x,y,z)	0
+#endif
 
 static int unix_start_timer(struct qemu_alarm_timer *t)
 {
