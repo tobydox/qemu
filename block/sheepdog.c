@@ -1,3 +1,4 @@
+#ifndef EMSCRIPTEN
 /*
  * Copyright (C) 2009-2010 Nippon Telegraph and Telephone Corporation.
  *
@@ -2093,3 +2094,4 @@ static void bdrv_sheepdog_init(void)
     bdrv_register(&bdrv_sheepdog);
 }
 block_init(bdrv_sheepdog_init);
+#endif

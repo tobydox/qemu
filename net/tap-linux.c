@@ -1,3 +1,4 @@
+#ifndef EMSCRIPTEN
 /*
  * QEMU System Emulator
  *
@@ -274,3 +275,4 @@ int tap_fd_get_ifname(int fd, char *ifname)
     pstrcpy(ifname, sizeof(ifr.ifr_name), ifr.ifr_name);
     return 0;
 }
+#endif

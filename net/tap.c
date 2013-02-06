@@ -1,3 +1,4 @@
+#ifndef EMSCRIPTEN
 /*
  * QEMU System Emulator
  *
@@ -860,3 +861,4 @@ int tap_disable(NetClientState *nc)
         return ret;
     }
 }
+#endif

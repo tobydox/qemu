@@ -1,3 +1,4 @@
+#ifndef EMSCRIPTEN
 /*
  * QEMU SDL audio driver
  *
@@ -456,3 +457,4 @@ struct audio_driver sdl_audio_driver = {
     .voice_size_out = sizeof (SDLVoiceOut),
     .voice_size_in  = 0
 };
+#endif

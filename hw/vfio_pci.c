@@ -1,3 +1,4 @@
+#ifndef EMSCRIPTEN
 /*
  * vfio based device assignment support
  *
@@ -2140,3 +2141,4 @@ static void register_vfio_pci_dev_type(void)
 }
 
 type_init(register_vfio_pci_dev_type)
+#endif
