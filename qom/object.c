@@ -412,6 +412,7 @@ Object *object_new_with_type(Type type)
 
 Object *object_new(const char *typename)
 {
+printf("object new: %s\n", typename );
     TypeImpl *ti = type_get_by_name(typename);
 
     return object_new_with_type(ti);
