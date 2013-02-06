@@ -466,7 +466,7 @@ tcg_target_ulong tcg_qemu_tb_exec(CPUArchState *cpustate, uint8_t *tb_ptr)
 
         /* Skip opcode and size entry. */
         tb_ptr += 2;
-
+printf("%d\n", opc );
         switch (opc) {
         case INDEX_op_end:
         case INDEX_op_nop:
