@@ -4,7 +4,7 @@ common-obj-y += qdev.o qdev-properties.o
 common-obj-y += irq.o
 
 ifeq ($(CONFIG_SOFTMMU),y)
-common-obj-y += usb/ ide/ pci/
+common-obj-y += ide/ pci/
 common-obj-y += loader.o
 common-obj-$(CONFIG_VIRTIO) += virtio-console.o
 common-obj-$(CONFIG_VIRTIO) += virtio-rng.o
@@ -162,7 +162,6 @@ common-obj-$(CONFIG_SOUND) += $(sound-obj-y)
 
 common-obj-$(CONFIG_REALLY_VIRTFS) += 9pfs/
 
-common-obj-y += usb/
 common-obj-$(CONFIG_PTIMER) += ptimer.o
 common-obj-$(CONFIG_MAX7310) += max7310.o
 common-obj-$(CONFIG_WM8750) += wm8750.o

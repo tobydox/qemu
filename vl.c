@@ -769,6 +769,7 @@ static void configure_rtc(QemuOpts *opts)
     }
 }
 
+#ifndef EMSCRIPTEN
 /***********************************************************/
 /* Bluetooth support */
 static int nb_hcis;
@@ -959,6 +960,7 @@ static int bt_parse(const char *opt)
     fprintf(stderr, "qemu: bad bluetooth parameter '%s'\n", opt);
     return 1;
 }
+#endif
 
 static int parse_sandbox(QemuOpts *opts, void *opaque)
 {
@@ -1389,6 +1391,7 @@ static void smp_parse(const char *optarg)
 
 static int usb_device_add(const char *devname)
 {
+#ifndef EMSCRIPTEN
     const char *p;
     USBDevice *dev = NULL;
 
@@ -1419,11 +1422,13 @@ static int usb_device_add(const char *devname)
         return -1;
 
 done:
+#endif
     return 0;
 }
 
 static int usb_device_del(const char *devname)
 {
+#ifndef EMSCRIPTEN
     int bus_num, addr;
     const char *p;
 
@@ -1441,6 +1446,9 @@ static int usb_device_del(const char *devname)
     addr = strtoul(p + 1, NULL, 0);
 
     return usb_device_delete_addr(bus_num, addr);
+#else
+	return 0;
+#endif
 }
 
 static int usb_parse(const char *cmdline)
@@ -4079,9 +4087,11 @@ int main(int argc, char **argv, char **envp)
         exit(1);
     }
 
+#ifndef EMSCRIPTEN
     /* init the bluetooth world */
     if (foreach_device_config(DEV_BT, bt_parse))
         exit(1);
+#endif
 
     if (!xen_enabled()) {
         /* On 32-bit hosts, QEMU is limited by virtual address space */
