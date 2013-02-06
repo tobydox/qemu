@@ -597,7 +597,7 @@ void tcg_register_helper(void *func, const char *name)
     if ((s->nb_helpers + 1) > s->allocated_helpers) {
         n = s->allocated_helpers;
         if (n == 0) {
-            n = 4;
+            n = 512;
         } else {
             n *= 2;
         }
