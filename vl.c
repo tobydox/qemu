@@ -270,6 +270,16 @@ uint32_t xen_domid;
 enum xen_mode xen_mode = XEN_EMULATE;
 static int tcg_tb_size;
 
+#ifdef EMSCRIPTEN
+static int default_serial = 0;
+static int default_parallel = 0;
+static int default_virtcon = 0;
+static int default_sclp = 0;
+static int default_monitor = 1;
+static int default_floppy = 0;
+static int default_cdrom = 0;
+static int default_sdcard = 0;
+#else
 static int default_serial = 1;
 static int default_parallel = 1;
 static int default_virtcon = 1;
@@ -278,6 +288,7 @@ static int default_monitor = 1;
 static int default_floppy = 1;
 static int default_cdrom = 1;
 static int default_sdcard = 1;
+#endif
 static int default_vga = 1;
 
 static struct {
@@ -2852,6 +2863,7 @@ int main(int argc, char **argv, char **envp)
     error_set_progname(argv[0]);
 
     g_mem_set_vtable(&mem_trace);
+#if 0
     if (!g_thread_supported()) {
 #if !GLIB_CHECK_VERSION(2, 31, 0)
         g_thread_init(NULL);
@@ -2860,6 +2872,7 @@ int main(int argc, char **argv, char **envp)
         exit(1);
 #endif
     }
+#endif
 
     module_call_init(MODULE_INIT_QOM);
 
@@ -3996,8 +4009,13 @@ int main(int argc, char **argv, char **envp)
             add_device_config(DEV_SERIAL, "vc:80Cx24C");
         if (default_parallel)
             add_device_config(DEV_PARALLEL, "vc:80Cx24C");
+#ifdef EMSCRIPTEN
+        if (default_monitor)
+            monitor_parse("stdio", "readline");
+#else
         if (default_monitor)
             monitor_parse("vc:80Cx24C", "readline");
+#endif
         if (default_virtcon)
             add_device_config(DEV_VIRTCON, "vc:80Cx24C");
         if (default_sclp) {
@@ -4105,7 +4123,9 @@ int main(int argc, char **argv, char **envp)
 
     bdrv_init_with_whitelist();
 
+#ifndef EMSCRIPTEN
     blk_mig_init();
+#endif
 
     /* open the virtual block devices */
     if (snapshot)
