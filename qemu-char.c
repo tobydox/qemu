@@ -39,6 +39,9 @@
 #include <sys/time.h>
 #include <zlib.h>
 
+#undef __linux__
+#undef __GLIBC__
+
 #ifndef _WIN32
 #include <sys/times.h>
 #include <sys/wait.h>
@@ -99,6 +102,11 @@
 
 #define READ_BUF_LEN 4096
 #define CBUFF_SIZE 65536
+
+#ifdef EMSCRIPTEN
+#define tcgetattr(x,y) 0
+#define tcsetattr(x,y,z) 0
+#endif
 
 /***********************************************************/
 /* character device */
@@ -2027,6 +2035,7 @@ static CharDriverState *qemu_chr_open_win_stdio(QemuOpts *opts)
 }
 #endif /* !_WIN32 */
 
+#ifndef EMSCRIPTEN
 /***********************************************************/
 /* UDP Net console */
 
@@ -2580,6 +2589,12 @@ static CharDriverState *qemu_chr_open_socket(QemuOpts *opts)
     return NULL;
 }
 
+#else
+
+#define IAC 255
+
+#endif
+
 /***********************************************************/
 /* Memory chardev */
 typedef struct {
@@ -2991,8 +3006,10 @@ static const struct {
     CharDriverState *(*open)(QemuOpts *opts);
 } backend_table[] = {
     { .name = "null",      .open = qemu_chr_open_null },
+#ifndef EMSCRIPTEN
     { .name = "socket",    .open = qemu_chr_open_socket },
     { .name = "udp",       .open = qemu_chr_open_udp },
+#endif
     { .name = "msmouse",   .open = qemu_chr_open_msmouse },
     { .name = "vc",        .open = text_console_init },
     { .name = "memory",    .open = qemu_chr_open_cirmemchr },
@@ -3369,6 +3386,9 @@ static CharDriverState *qmp_chardev_open_port(ChardevPort *port, Error **errp)
 static CharDriverState *qmp_chardev_open_socket(ChardevSocket *sock,
                                                 Error **errp)
 {
+#ifdef EMSCRIPTEN
+	return NULL;
+#else
     SocketAddress *addr = sock->addr;
     bool do_nodelay     = sock->has_nodelay ? sock->nodelay : false;
     bool is_listen      = sock->has_server  ? sock->server  : true;
@@ -3386,6 +3406,7 @@ static CharDriverState *qmp_chardev_open_socket(ChardevSocket *sock,
     }
     return qemu_chr_open_socket_fd(fd, do_nodelay, is_listen,
                                    is_telnet, is_waitconnect, errp);
+#endif
 }
 
 ChardevReturn *qmp_chardev_add(const char *id, ChardevBackend *backend,
