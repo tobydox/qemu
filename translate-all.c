@@ -299,8 +299,10 @@ static inline void map_exec(void *addr, long size)
     end += page_size - 1;
     end &= ~(page_size - 1);
 
+#ifndef EMSCRIPTEN_JS
     mprotect((void *)start, end - start,
              PROT_READ | PROT_WRITE | PROT_EXEC);
+#endif
 }
 #endif
 
