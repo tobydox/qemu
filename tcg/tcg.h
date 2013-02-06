@@ -384,7 +384,8 @@ typedef struct TCGTemp {
 
 typedef struct TCGHelperInfo {
     tcg_target_ulong func;
-    const char *name;
+    //const char *name;
+	char pad[8];
 } TCGHelperInfo;
 
 typedef struct TCGContext TCGContext;

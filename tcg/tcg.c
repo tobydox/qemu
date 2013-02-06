@@ -605,7 +605,7 @@ void tcg_register_helper(void *func, const char *name)
         s->allocated_helpers = n;
     }
     s->helpers[s->nb_helpers].func = (tcg_target_ulong)func;
-    s->helpers[s->nb_helpers].name = name;
+    //s->helpers[s->nb_helpers].name = name;
     s->nb_helpers++;
 }
 
@@ -956,7 +956,7 @@ void tcg_dump_ops(TCGContext *s)
             val = args[1];
             th = tcg_find_helper(s, val);
             if (th) {
-                qemu_log("%s", th->name);
+                //qemu_log("%s", th->name);
             } else {
                 if (c == INDEX_op_movi_i32) {
                     qemu_log("0x%x", (uint32_t)val);
