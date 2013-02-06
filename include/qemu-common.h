@@ -50,6 +50,10 @@
 #include "sysemu/os-posix.h"
 #endif
 
+#ifdef EMSCRIPTEN
+#include "sysemu/os-emscripten.h"
+#endif
+
 #ifndef O_LARGEFILE
 #define O_LARGEFILE 0
 #endif
@@ -84,7 +88,7 @@
 # error Unknown pointer size
 #endif
 
-#ifndef CONFIG_IOVEC
+#if !defined(CONFIG_IOVEC) && !defined(EMSCRIPTEN)
 #define CONFIG_IOVEC
 struct iovec {
     void *iov_base;
