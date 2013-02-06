@@ -1,0 +1,5 @@
+BUILD=$PWD/build
+BASEDIR=$PWD/..
+EMSCRIPTEN=$BASEDIR/emscripten
+TARGET=i386-softmmu
+

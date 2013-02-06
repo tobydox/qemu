@@ -1,0 +1,61 @@
+--- a/glib/gatomic.c
++++ b/glib/gatomic.c
+@@ -847,6 +847,9 @@ g_atomic_pointer_compare_and_exchange (volatile gpointer G_GNUC_MAY_ALIAS *atomi
+ /* We have to use the slow, but safe locking method */
+ static GMutex *g_atomic_mutex; 
+ 
++#define g_mutex_lock(x)
++#define g_mutex_unlock(x)
++
+ gint
+ g_atomic_int_exchange_and_add (volatile gint G_GNUC_MAY_ALIAS *atomic, 
+ 			       gint           val)
+--- a/glib/gmain.c
++++ b/glib/gmain.c
+@@ -3859,7 +3859,7 @@ g_child_watch_source_init_multi_threaded (void)
+  
+   action.sa_handler = g_child_watch_signal_handler;
+   sigemptyset (&action.sa_mask);
+-  action.sa_flags = SA_RESTART | SA_NOCLDSTOP;
++  action.sa_flags = SA_NOCLDSTOP;
+   sigaction (SIGCHLD, &action, NULL);
+ }
+ 
+--- a/glib/gtypes.h
++++ b/glib/gtypes.h
+@@ -169,7 +169,7 @@ typedef const gchar *   (*GTranslateFunc)       (const gchar   *str,
+ 
+ /* Arch specific stuff for speed
+  */
+-#if defined (__GNUC__) && (__GNUC__ >= 2) && defined (__OPTIMIZE__)
++#if defined (__GNUC__) && (__GNUC__ >= 2) && defined (__OPTIMIZE__) && !defined(EMSCRIPTEN_JS)
+ #  if defined (__i386__)
+ #    define GUINT16_SWAP_LE_BE_IA32(val) \
+        (__extension__						\
+--- a/configure
++++ b/configure
+@@ -9380,13 +9380,6 @@ $as_echo "$LINGUAS" >&6; }
+ 	< $srcdir/po/POTFILES.in > po/POTFILES
+ 
+ 
+-if test "$gt_cv_have_gettext" != "yes" ; then
+-  as_fn_error "
+-*** You must have either have gettext support in your C library, or use the
+-*** GNU gettext library. (http://www.gnu.org/software/gettext/gettext.html
+-" "$LINENO" 5
+-fi
+-
+ LIBS="$INTLLIBS $LIBS"
+ 
+ GETTEXT_PACKAGE=glib20
+@@ -23250,10 +23243,6 @@ fi
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $glib_cv_value_MSG_DONTROUTE" >&5
+ $as_echo "$glib_cv_value_MSG_DONTROUTE" >&6; }
+ 
+-if $glib_failed ; then
+-  as_fn_error "Could not determine values for MSG_* constants" "$LINENO" 5
+-fi
+-
+ for ac_func in getprotobyname_r endservent
+ do :
+   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
