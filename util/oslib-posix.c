@@ -58,6 +58,11 @@ static int running_on_valgrind = -1;
 #else
 #  define running_on_valgrind 0
 #endif
+
+#ifdef EMSCRIPTEN
+#undef CONFIG_LINUX
+#endif
+
 #ifdef CONFIG_LINUX
 #include <sys/syscall.h>
 #endif
