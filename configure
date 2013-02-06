@@ -1635,88 +1635,6 @@ if test "$sparse" != "no" ; then
   fi
 fi
 
-##########################################
-# SDL probe
-
-# Look for sdl configuration program (pkg-config or sdl-config).  Try
-# sdl-config even without cross prefix, and favour pkg-config over sdl-config.
-if test "`basename $sdl_config`" != sdl-config && ! has ${sdl_config}; then
-  sdl_config=sdl-config
-fi
-
-if $pkg_config sdl --modversion >/dev/null 2>&1; then
-  sdlconfig="$pkg_config sdl"
-  _sdlversion=`$sdlconfig --modversion 2>/dev/null | sed 's/[^0-9]//g'`
-elif has ${sdl_config}; then
-  sdlconfig="$sdl_config"
-  _sdlversion=`$sdlconfig --version | sed 's/[^0-9]//g'`
-else
-  if test "$sdl" = "yes" ; then
-    feature_not_found "sdl"
-  fi
-  sdl=no
-fi
-if test -n "$cross_prefix" && test "$(basename "$sdlconfig")" = sdl-config; then
-  echo warning: using "\"$sdlconfig\"" to detect cross-compiled sdl >&2
-fi
-
-sdl_too_old=no
-if test "$sdl" != "no" ; then
-  cat > $TMPC << EOF
-#include <SDL.h>
-#undef main /* We don't want SDL to override our main() */
-int main( void ) { return SDL_Init (SDL_INIT_VIDEO); }
-EOF
-  sdl_cflags=`$sdlconfig --cflags 2> /dev/null`
-  if test "$static" = "yes" ; then
-    sdl_libs=`$sdlconfig --static-libs 2>/dev/null`
-  else
-    sdl_libs=`$sdlconfig --libs 2> /dev/null`
-  fi
-  if compile_prog "$sdl_cflags" "$sdl_libs" ; then
-    if test "$_sdlversion" -lt 121 ; then
-      sdl_too_old=yes
-    else
-      if test "$cocoa" = "no" ; then
-        sdl=yes
-      fi
-    fi
-
-    # static link with sdl ? (note: sdl.pc's --static --libs is broken)
-    if test "$sdl" = "yes" -a "$static" = "yes" ; then
-      if test $? = 0 && echo $sdl_libs | grep -- -laa > /dev/null; then
-         sdl_libs="$sdl_libs `aalib-config --static-libs 2>/dev/null`"
-         sdl_cflags="$sdl_cflags `aalib-config --cflags 2>/dev/null`"
-      fi
-      if compile_prog "$sdl_cflags" "$sdl_libs" ; then
-	:
-      else
-        sdl=no
-      fi
-    fi # static link
-  else # sdl not found
-    if test "$sdl" = "yes" ; then
-      feature_not_found "sdl"
-    fi
-    sdl=no
-  fi # sdl compile test
-fi
-
-if test "$sdl" = "yes" ; then
-  cat > $TMPC <<EOF
-#include <SDL.h>
-#if defined(SDL_VIDEO_DRIVER_X11)
-#include <X11/XKBlib.h>
-#else
-#error No x11 support
-#endif
-int main(void) { return 0; }
-EOF
-  if compile_prog "$sdl_cflags" "$sdl_libs" ; then
-    sdl_libs="$sdl_libs -lX11"
-  fi
-  libs_softmmu="$sdl_libs $libs_softmmu"
-fi
 
 ##########################################
 # VNC TLS/WS detection
@@ -2151,9 +2069,6 @@ then
     glib_libs=`$pkg_config --libs gthread-2.0 2>/dev/null`
     LIBS="$glib_libs $LIBS"
     libs_qga="$glib_libs $libs_qga"
-else
-    echo "glib-$glib_req_ver required to compile QEMU"
-    exit 1
 fi
 
 ##########################################
@@ -2244,14 +2159,6 @@ else
       break
     fi
   done
-fi
-
-if test "$mingw32" != yes -a "$pthread" = no; then
-  echo
-  echo "Error: pthread check failed"
-  echo "Make sure to have the pthread libs and headers installed."
-  echo
-  exit 1
 fi
 
 ##########################################
@@ -2645,7 +2552,7 @@ int main(void)
 }
 EOF
 if compile_prog "" "" ; then
-  fiemap=yes
+  fiemap=no
 fi
 
 # check for dup3
@@ -2770,24 +2677,6 @@ EOF
   fi
 fi
 
-
-##########################################
-# Do we need libm
-cat > $TMPC << EOF
-#include <math.h>
-int main(void) { return isnan(sin(0.0)); }
-EOF
-if compile_prog "" "" ; then
-  :
-elif compile_prog "" "-lm" ; then
-  LIBS="-lm $LIBS"
-  libs_qga="-lm $libs_qga"
-else
-  echo
-  echo "Error: libm check failed"
-  echo
-  exit 1
-fi
 
 ##########################################
 # Do we need librt
@@ -3171,11 +3060,6 @@ if test -z "$zero_malloc" ; then
     else
 	zero_malloc="yes"
     fi
-fi
-
-# Now we've finished running tests it's OK to add -Werror to the compiler flags
-if test "$werror" = "yes"; then
-    QEMU_CFLAGS="-Werror $QEMU_CFLAGS"
 fi
 
 if test "$solaris" = "no" ; then
