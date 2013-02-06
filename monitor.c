@@ -2561,6 +2561,7 @@ static mon_cmd_t info_cmds[] = {
         .help       = "show NUMA information",
         .mhandler.cmd = do_info_numa,
     },
+#ifndef EMSCRIPTEN
     {
         .name       = "usb",
         .args_type  = "",
@@ -2575,6 +2576,7 @@ static mon_cmd_t info_cmds[] = {
         .help       = "show host USB devices",
         .mhandler.cmd = usb_host_info,
     },
+#endif
     {
         .name       = "profile",
         .args_type  = "",
