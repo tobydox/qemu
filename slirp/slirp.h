@@ -4,6 +4,8 @@
 #include "config-host.h"
 #include "slirp_config.h"
 
+#include <sys/socket.h>
+
 #ifdef _WIN32
 # include <inttypes.h>
 
