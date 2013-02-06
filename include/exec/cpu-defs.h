@@ -176,10 +176,10 @@ typedef struct CPUWatchpoint {
     } icount_decr;                                                      \
     uint32_t can_do_io; /* nonzero if memory mapped IO is safe.  */     \
                                                                         \
+    int singlestep_enabled;                                             \
     /* from this point: preserved by CPU reset */                       \
     /* ice debug support */                                             \
     QTAILQ_HEAD(breakpoints_head, CPUBreakpoint) breakpoints;            \
-    int singlestep_enabled;                                             \
                                                                         \
     QTAILQ_HEAD(watchpoints_head, CPUWatchpoint) watchpoints;            \
     CPUWatchpoint *watchpoint_hit;                                      \
