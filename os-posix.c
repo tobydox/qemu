@@ -40,6 +40,7 @@
 #include "net/slirp.h"
 #include "qemu-options.h"
 
+#undef CONFIG_LINUX
 #ifdef CONFIG_LINUX
 #include <sys/prctl.h>
 #endif
@@ -64,7 +65,11 @@ void os_setup_early_signal_handling(void)
 
 static void termsig_handler(int signal, siginfo_t *info, void *c)
 {
+#ifdef EMSCRIPTEN
+    qemu_system_killed(info->si_signo, 0);
+#else
     qemu_system_killed(info->si_signo, info->si_pid);
+#endif
 }
 
 void os_setup_signal_handling(void)
