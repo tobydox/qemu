@@ -32,6 +32,7 @@
 
 #include "qemu/compatfd.h"
 
+#ifndef EMSCRIPTEN
 /* If we have signalfd, we mask out the signals we want to handle and then
  * use signalfd to listen for them.  We rely on whatever the current signal
  * handler is to dispatch the signals when we receive them.
@@ -66,9 +67,11 @@ static void sigfd_handler(void *opaque)
         }
     }
 }
+#endif
 
 static int qemu_signal_init(void)
 {
+#ifndef EMSCRIPTEN
     int sigfd;
     sigset_t set;
 
@@ -95,6 +98,7 @@ static int qemu_signal_init(void)
 
     qemu_set_fd_handler2(sigfd, NULL, sigfd_handler, NULL,
                          (void *)(intptr_t)sigfd);
+#endif
 
     return 0;
 }
@@ -142,6 +146,7 @@ int qemu_init_main_loop(void)
 
 static fd_set rfds, wfds, xfds;
 static int nfds;
+#ifndef EMSCRIPTEN
 static GPollFD poll_fds[1024 * 2]; /* this is probably overkill */
 static int n_poll_fds;
 static int max_priority;
@@ -391,6 +396,7 @@ static int os_host_main_loop_wait(uint32_t timeout)
     return select_ret || g_poll_ret;
 }
 #endif
+#endif
 
 int main_loop_wait(int nonblocking)
 {
@@ -413,7 +419,11 @@ int main_loop_wait(int nonblocking)
     slirp_select_fill(&nfds, &rfds, &wfds, &xfds);
 #endif
     qemu_iohandler_fill(&nfds, &rfds, &wfds, &xfds);
+#ifdef EMSCRIPTEN
+	ret = 0;
+#else
     ret = os_host_main_loop_wait(timeout);
+#endif
     qemu_iohandler_poll(&rfds, &wfds, &xfds, ret);
 #ifdef CONFIG_SLIRP
     slirp_select_poll(&rfds, &wfds, &xfds, (ret < 0));

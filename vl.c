@@ -1986,6 +1986,10 @@ static bool main_loop_should_exit(void)
     return false;
 }
 
+#ifdef EMSCRIPTEN
+void qemu_tcg_cpu_iter();
+#endif
+
 static void main_loop(void)
 {
     bool nonblocking;
@@ -1998,7 +2002,13 @@ static void main_loop(void)
 #ifdef CONFIG_PROFILER
         ti = profile_getclock();
 #endif
+#ifdef EMSCRIPTEN
+        main_loop_wait(true);
+        qemu_tcg_cpu_iter();
+printf("did one iter\n");
+#else
         last_io = main_loop_wait(nonblocking);
+#endif
 #ifdef CONFIG_PROFILER
         dev_time += profile_getclock() - ti;
 #endif

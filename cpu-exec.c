@@ -34,6 +34,7 @@ bool qemu_cpu_has_work(CPUState *cpu)
 
 void cpu_loop_exit(CPUArchState *env)
 {
+printf("cpu_loop_exit: %p\n", env );
     env->current_tb = NULL;
     longjmp(env->jmp_env, 1);
 }
@@ -194,6 +195,8 @@ int cpu_exec(CPUArchState *env)
 
         env->halted = 0;
     }
+	int imax;
+	int jmax;
 
     cpu_single_env = env;
 
@@ -232,7 +235,11 @@ int cpu_exec(CPUArchState *env)
     env->exception_index = -1;
 
     /* prepare setjmp context for exception handling */
+#ifdef EMSCRIPTEN
+    for(imax=0;imax < 10; ++imax) {
+#else
     for(;;) {
+#endif
         if (setjmp(env->jmp_env) == 0) {
             /* if an exception is pending, we execute it here */
             if (env->exception_index >= 0) {
@@ -261,7 +268,11 @@ int cpu_exec(CPUArchState *env)
             }
 
             next_tb = 0; /* force lookup of first TB */
+#ifdef EMSCRIPTEN
+            for(jmax=0; jmax<100; ++jmax) {
+#else
             for(;;) {
+#endif
                 interrupt_request = env->interrupt_request;
                 if (unlikely(interrupt_request)) {
                     if (unlikely(env->singlestep_enabled & SSTEP_NOIRQ)) {
