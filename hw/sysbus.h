@@ -71,18 +71,12 @@ DeviceState *sysbus_create_varargs(const char *name,
                                  hwaddr addr, ...);
 DeviceState *sysbus_try_create_varargs(const char *name,
                                        hwaddr addr, ...);
-static inline DeviceState *sysbus_create_simple(const char *name,
+DeviceState *sysbus_create_simple(const char *name,
                                               hwaddr addr,
-                                              qemu_irq irq)
-{
-    return sysbus_create_varargs(name, addr, irq, NULL);
-}
+                                              qemu_irq irq);
 
-static inline DeviceState *sysbus_try_create_simple(const char *name,
+DeviceState *sysbus_try_create_simple(const char *name,
                                                     hwaddr addr,
-                                                    qemu_irq irq)
-{
-    return sysbus_try_create_varargs(name, addr, irq, NULL);
-}
+                                                    qemu_irq irq);
 
 #endif /* !HW_SYSBUS_H */

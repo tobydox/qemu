@@ -121,6 +121,30 @@ static int sysbus_device_init(DeviceState *dev)
     return sbc->init(sd);
 }
 
+DeviceState *sysbus_create_simple(const char *name,
+                                              hwaddr addr,
+                                              qemu_irq irq)
+{
+    DeviceState *dev;
+    SysBusDevice *s;
+
+    dev = qdev_create(NULL, name);
+    s = SYS_BUS_DEVICE(dev);
+    qdev_init_nofail(dev);
+    if (addr != (hwaddr)-1) {
+        sysbus_mmio_map(s, 0, addr);
+    }
+
+	if(irq)
+	{
+        sysbus_connect_irq(s, 0, irq);
+	}
+
+    return dev;
+}
+
+
+
 DeviceState *sysbus_create_varargs(const char *name,
                                    hwaddr addr, ...)
 {
@@ -147,6 +171,29 @@ DeviceState *sysbus_create_varargs(const char *name,
         n++;
     }
     va_end(va);
+    return dev;
+}
+
+DeviceState *sysbus_try_create_simple(const char *name,
+                                                    hwaddr addr,
+                                                    qemu_irq irq)
+{
+    DeviceState *dev;
+    SysBusDevice *s;
+
+    dev = qdev_try_create(NULL, name);
+    if (!dev) {
+        return NULL;
+    }
+    s = SYS_BUS_DEVICE(dev);
+    qdev_init_nofail(dev);
+    if (addr != (hwaddr)-1) {
+        sysbus_mmio_map(s, 0, addr);
+    }
+	if(irq)
+	{
+    	sysbus_connect_irq(s, 0, irq);
+	}
     return dev;
 }
 
