@@ -16,6 +16,14 @@
 #include "qemu-common.h"
 #include "qemu/compatfd.h"
 
+#ifdef EMSCRIPTEN
+
+int qemu_signalfd(const sigset_t *mask)
+{
+}
+
+#else
+
 #include <sys/syscall.h>
 #include <pthread.h>
 
@@ -136,3 +144,5 @@ bool qemu_signalfd_available(void)
     return false;
 #endif
 }
+
+#endif
