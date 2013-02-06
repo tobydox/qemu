@@ -22,6 +22,20 @@
 #include <errno.h>
 #include <unistd.h>
 
+#include <netdb.h>
+#ifdef EMSCRIPTEN_JS
+#include <net/netdb.h>
+
+#define PF_INET6        10      /* IP version 6.  */
+#define AF_INET6        PF_INET6
+#define PF_UNSPEC       0
+#define AI_PASSIVE   0x0001
+#define AI_CANONNAME 0x0002
+#define INET6_ADDRSTRLEN 46
+#define NI_NUMERICHOST       1
+#define NI_NUMERICSERV 2
+#endif
+
 #include "monitor/monitor.h"
 #include "qemu/sockets.h"
 #include "qemu-common.h" /* for qemu_isdigit */
