@@ -41,7 +41,7 @@
 #include "qapi/dealloc-visitor.h"
 
 /* Net bridge is currently not supported for W32. */
-#if !defined(_WIN32)
+#if !defined(_WIN32) && !defined(EMSCRIPTEN)
 # define CONFIG_NET_BRIDGE
 #endif
 
@@ -711,7 +711,9 @@ static int (* const net_client_init_fun[NET_CLIENT_OPTIONS_KIND_MAX])(
 #ifdef CONFIG_SLIRP
         [NET_CLIENT_OPTIONS_KIND_USER]      = net_init_slirp,
 #endif
+#ifndef EMSCRIPTEN
         [NET_CLIENT_OPTIONS_KIND_TAP]       = net_init_tap,
+#endif
         [NET_CLIENT_OPTIONS_KIND_SOCKET]    = net_init_socket,
 #ifdef CONFIG_VDE
         [NET_CLIENT_OPTIONS_KIND_VDE]       = net_init_vde,
