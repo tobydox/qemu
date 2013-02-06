@@ -226,6 +226,10 @@ bool aio_poll(AioContext *ctx, bool blocking)
         return progress;
     }
 
+#ifdef EMSCRIPTEN
+	return progress;
+#endif
+
     /* wait until next event */
     ret = select(max_fd, &rdfds, &wrfds, NULL, blocking ? NULL : &tv0);
 

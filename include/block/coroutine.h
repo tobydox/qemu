@@ -79,7 +79,11 @@ void qemu_coroutine_enter(Coroutine *coroutine, void *opaque);
  * This function does not return until the coroutine is re-entered using
  * qemu_coroutine_enter().
  */
+#ifdef EMSCRIPTEN
+#define qemu_coroutine_yield()
+#else
 void coroutine_fn qemu_coroutine_yield(void);
+#endif
 
 /**
  * Get the currently executing coroutine

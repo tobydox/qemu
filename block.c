@@ -49,6 +49,10 @@
 #include <windows.h>
 #endif
 
+#ifdef EMSCRIPTEN
+#define qemu_in_coroutine()	1
+#endif
+
 #define NOT_DONE 0x7fffffff /* used while emulated sync operation in progress */
 
 typedef enum {
@@ -3968,7 +3972,9 @@ static void bdrv_co_io_em_complete(void *opaque, int ret)
     CoroutineIOCompletion *co = opaque;
 
     co->ret = ret;
+#ifndef EMSCRIPTEN
     qemu_coroutine_enter(co->coroutine, NULL);
+#endif
 }
 
 static int coroutine_fn bdrv_co_io_em(BlockDriverState *bs, int64_t sector_num,
