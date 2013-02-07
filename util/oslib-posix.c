@@ -61,6 +61,7 @@ static int running_on_valgrind = -1;
 
 #ifdef EMSCRIPTEN
 #undef CONFIG_LINUX
+#include <malloc.h>
 #endif
 
 #ifdef CONFIG_LINUX

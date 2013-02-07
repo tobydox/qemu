@@ -104,7 +104,7 @@
 
 #ifdef EMSCRIPTEN
 #define tcgetattr(x,y) 0
-#define tcsetattr(x,y,z) 0
+#define tcsetattr(x,y,z)
 #endif
 
 /***********************************************************/

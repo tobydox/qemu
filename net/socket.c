@@ -247,6 +247,7 @@ static int net_socket_mcast_create(struct sockaddr_in *mcastaddr, struct in_addr
     int loop;
 #endif
 
+#ifndef EMSCRIPTEN
     if (!IN_MULTICAST(ntohl(mcastaddr->sin_addr.s_addr))) {
         fprintf(stderr, "qemu: error: specified mcastaddr \"%s\" (0x%08x) "
                 "does not contain a multicast address\n",
@@ -255,6 +256,10 @@ static int net_socket_mcast_create(struct sockaddr_in *mcastaddr, struct in_addr
         return -1;
 
     }
+#else
+	return -1;
+#endif
+
     fd = qemu_socket(PF_INET, SOCK_DGRAM, 0);
     if (fd < 0) {
         perror("socket(PF_INET, SOCK_DGRAM)");

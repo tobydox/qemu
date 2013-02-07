@@ -865,7 +865,7 @@ static void *qemu_tcg_cpu_thread_fn(void *arg)
 
 void qemu_tcg_cpu_iter()
 {
-	int i;
+	//int i;
 	//for(i = 0; i < 2; ++i )
 	{
         tcg_exec_all();
