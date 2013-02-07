@@ -66,7 +66,6 @@ static void event_notifier_ready(EventNotifier *notifier)
 
     event_notifier_test_and_clear(notifier);
 
-restart:
     QLIST_FOREACH_SAFE(elem, &head, all, next)
 	{
 		QLIST_REMOVE(elem, all);
