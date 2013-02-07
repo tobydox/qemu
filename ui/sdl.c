@@ -66,7 +66,7 @@ static Notifier mouse_mode_notifier;
 
 static void sdl_update(DisplayState *ds, int x, int y, int w, int h)
 {
-    //    printf("updating x=%d y=%d w=%d h=%d\n", x, y, w, h);
+    printf("updating x=%d y=%d w=%d h=%d\n", x, y, w, h);
     SDL_Rect rec;
     rec.x = x;
     rec.y = y;
@@ -90,6 +90,7 @@ static void sdl_setdata(DisplayState *ds)
 {
     if (guest_screen != NULL) SDL_FreeSurface(guest_screen);
 
+printf("set data: %p\n", ds_get_data(ds));
     guest_screen = SDL_CreateRGBSurfaceFrom(ds_get_data(ds), ds_get_width(ds), ds_get_height(ds),
                                             ds_get_bits_per_pixel(ds), ds_get_linesize(ds),
                                             ds->surface->pf.rmask, ds->surface->pf.gmask,
@@ -100,7 +101,7 @@ static void do_sdl_resize(int width, int height, int bpp)
 {
     int flags;
 
-    //    printf("resizing to %d %d\n", w, h);
+    printf("resizing to %d %d\n", width, height);
 
     flags = SDL_HWSURFACE | SDL_ASYNCBLIT | SDL_HWACCEL;
     if (gui_fullscreen) {
@@ -366,6 +367,7 @@ static void sdl_show_cursor(void)
 
 static void sdl_grab_start(void)
 {
+#ifndef EMSCRIPTEN_JS
     /*
      * If the application is not active, do not try to enter grab state. This
      * prevents 'SDL_WM_GrabInput(SDL_GRAB_ON)' from blocking all the
@@ -383,14 +385,17 @@ static void sdl_grab_start(void)
     SDL_WM_GrabInput(SDL_GRAB_ON);
     gui_grab = 1;
     sdl_update_caption();
+#endif
 }
 
 static void sdl_grab_end(void)
 {
+#ifndef EMSCRIPTEN_JS
     SDL_WM_GrabInput(SDL_GRAB_OFF);
     gui_grab = 0;
     sdl_show_cursor();
     sdl_update_caption();
+#endif
 }
 
 static void absolute_mouse_grab(void)
