@@ -236,7 +236,11 @@ int cpu_exec(CPUArchState *env)
 
     /* prepare setjmp context for exception handling */
 #ifdef EMSCRIPTEN
+#ifdef EMSCRIPTEN_JS
+    for(imax=0;imax < 1; ++imax) {
+#else
     for(imax=0;imax < 10; ++imax) {
+#endif
 #else
     for(;;) {
 #endif
@@ -269,7 +273,11 @@ int cpu_exec(CPUArchState *env)
 
             next_tb = 0; /* force lookup of first TB */
 #ifdef EMSCRIPTEN
+#ifdef EMSCRIPTEN_JS
+            for(jmax=0; jmax<10; ++jmax) {
+#else
             for(jmax=0; jmax<100; ++jmax) {
+#endif
 #else
             for(;;) {
 #endif
