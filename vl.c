@@ -49,6 +49,10 @@
 #include <netdb.h>
 #include <sys/select.h>
 
+#ifdef EMSCRIPTEN_JS
+#include <emscripten/emscripten.h>
+#endif
+
 #ifdef CONFIG_BSD
 #include <sys/stat.h>
 #if defined(__FreeBSD__) || defined(__FreeBSD_kernel__) || defined(__DragonFly__)
@@ -2033,6 +2037,25 @@ printf("did one iter\n");
 #endif
     } while (!main_loop_should_exit());
 }
+
+
+void main_loop_iter()
+{
+	int i;
+	printf("main_loop_iter enter\n");
+	//for( i = 0; i < 10; ++i )
+	{
+		main_loop_wait(true);
+		qemu_tcg_cpu_iter();
+		if( main_loop_should_exit() )
+		{
+			printf( "should exit!\n" );
+			return;
+		}
+	}
+	printf("main_loop_iter finished\n");
+}
+
 
 static void version(void)
 {
@@ -4359,10 +4382,15 @@ int main(int argc, char **argv, char **envp)
     os_setup_post();
 
     resume_all_vcpus();
+
+#ifdef EMSCRIPTEN_JS
+	emscripten_set_main_loop( main_loop_iter, 10, 0 );
+#else
     main_loop();
     bdrv_close_all();
     pause_all_vcpus();
     res_free();
+#endif
 
     return 0;
 }
