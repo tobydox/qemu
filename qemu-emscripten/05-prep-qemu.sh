@@ -4,7 +4,6 @@
 
 cp -v glib.c $BASEDIR
 cp -v pixman*.c $BASEDIR
-cp -v sdl*.c $BASEDIR
 
 mkdir -p $BUILD/pixman/pixman
 cp -v pixman*.h $BUILD/pixman/pixman
