@@ -39,5 +39,8 @@
 #define SO_TYPE            3
 #endif
 
+#define sigjmp_buf jmp_buf
+#define siglongjmp	longjmp
+#define sigsetjmp(x,y)	setjmp(x)
 
 #endif
