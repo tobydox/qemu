@@ -2504,6 +2504,9 @@
 #
 # @fd: #optional file descriptor of an already opened tap
 #
+# @fds: #optional multiple file descriptors of already opened multiqueue capable
+# tap
+#
 # @script: #optional script to initialize the interface
 #
 # @downscript: #optional script to shut down the interface
@@ -2517,6 +2520,9 @@
 # @vhost: #optional enable vhost-net network accelerator
 #
 # @vhostfd: #optional file descriptor of an already opened vhost net device
+#
+# @vhostfds: #optional file descriptors of multiple already opened vhost net
+# devices
 #
 # @vhostforce: #optional vhost on for non-MSIX virtio guests
 #
@@ -3095,7 +3101,7 @@
                                    'out' : 'str' } }
 
 ##
-# @ChardevPort:
+# @ChardevHostdev:
 #
 # Configuration info for device chardevs.
 #
@@ -3105,11 +3111,7 @@
 #
 # Since: 1.4
 ##
-{ 'enum': 'ChardevPortKind', 'data': [ 'serial',
-                                       'parallel' ] }
-
-{ 'type': 'ChardevPort', 'data': { 'device' : 'str',
-                                   'type'   : 'ChardevPortKind'} }
+{ 'type': 'ChardevHostdev', 'data': { 'device' : 'str' } }
 
 ##
 # @ChardevSocket:
@@ -3142,7 +3144,8 @@
 { 'type': 'ChardevDummy', 'data': { } }
 
 { 'union': 'ChardevBackend', 'data': { 'file'   : 'ChardevFile',
-                                       'port'   : 'ChardevPort',
+                                       'serial' : 'ChardevHostdev',
+                                       'parallel': 'ChardevHostdev',
                                        'socket' : 'ChardevSocket',
                                        'pty'    : 'ChardevDummy',
                                        'null'   : 'ChardevDummy' } }
@@ -3152,6 +3155,9 @@
 #
 # Return info about the chardev backend just created.
 #
+# @pty: #optional name of the slave pseudoterminal device, present if
+#       and only if a chardev of type 'pty' was created
+#
 # Since: 1.4
 ##
 { 'type' : 'ChardevReturn', 'data': { '*pty' : 'str' } }
@@ -3159,12 +3165,12 @@
 ##
 # @chardev-add:
 #
-# Add a file chardev
+# Add a character device backend
 #
 # @id: the chardev's ID, must be unique
 # @backend: backend type and parameters
 #
-# Returns: chardev info.
+# Returns: ChardevReturn.
 #
 # Since: 1.4
 ##
@@ -3175,7 +3181,7 @@
 ##
 # @chardev-remove:
 #
-# Remove a chardev
+# Remove a character device backend
 #
 # @id: the chardev's ID, must exist and not be in use
 #
